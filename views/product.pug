@@ -1,0 +1,24 @@
+extends layout
+
+block styles
+	link(rel='stylesheet', href='/stylesheets/product.css')
+	link(href="https://fonts.googleapis.com/css?family=Comfortaa" rel="stylesheet")
+
+
+block scripts
+	script(src="/javascripts/product.js")
+
+block content
+	div#main-container.white.container.col-md-6.col-md-offset-4
+		div#product-header
+			h2#product-inventory-id-wrapper ID #<span id='product-inventory-id'></span>
+			h1#product-name 
+			p#product-description
+			div#product-status-wrapper
+				p
+				p#state-pawn Empeño
+				p#state-shelf En Venta
+				p#state-sold Vendido
+				p
+		div#product-history
+			div.history-item

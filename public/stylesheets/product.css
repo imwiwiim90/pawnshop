@@ -1,0 +1,73 @@
+#main-container {
+	position: relative;
+	margin-top: 30px;
+	padding: 30px 50px;
+	height: 80%;
+	box-shadow: 0 0 45px 0px #aaaaaa;
+	overflow-y: scroll;
+	color: #333;
+
+	display: flex;
+	flex-flow: column;
+}
+#product-header {
+
+	flex-basis: auto;
+
+}
+
+#product-inventory-id-wrapper {
+	display: block;
+	float: right;
+	font-weight: 900;
+	font-size: 20px;
+	font-family: "Comfortaa", cursive;
+	letter-spacing: 2px;
+}
+
+#product-name {
+	color: #707070;
+	font-family: "Comfortaa", cursive;
+}
+
+#product-status-wrapper {
+	margin: 20px 0;
+
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
+#product-status-wrapper p {
+	flex-grow: 1;
+	text-align: center;
+	color: #BCBCBC;
+}
+#product-status-wrapper p.highlight {
+	color : #6793FF;
+}
+
+#product-history {
+	overflow-y: scroll;
+	height: 70%;
+
+	flex-grow: 1;
+}
+
+.history-item-title span, .history-item-body span {
+	margin-right: 40px;
+}
+.transaction-type {
+	font-family: "Comfortaa", cursive;
+	font-weight: 900;
+	font-size: 20px;
+}
+
+.history-item-body {
+	padding: 6px 0 10px 20px;
+
+}
+
+.transaction-date {
+	color : #9277C8;
+	opacity: 0.5;
+}

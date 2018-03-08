@@ -1,0 +1,29 @@
+extends layout
+
+block styles
+	link(rel='stylesheet', href='/stylesheets/new_transaction.css')
+	link(href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet")
+
+block scripts
+	script(src="/javascripts/new_transaction.js")
+
+block content
+	div.container-fluid
+		div#main-container.col-sm-8.col-sm-offset-2.white
+			h1#title Nueva Transacción
+			div#dynamic-container
+				form
+					select#transaction-select
+						option( transaction-name='pawn') Empeño
+						option( transaction-name='shelf') Saca
+						option( transaction-name='sell') Venta
+						option( transaction-name='extension_payment') Prórroga
+						option( transaction-name='shelf_to_pawn') Venta a empeño
+
+					label(for='product-id') digite el #ID del producto
+					input(type='text' id='product-id' name='product-id')
+			div#btns-container.row
+				div#cancel-btn.col-xs-3.col-xs-offset-3.div-btn.fail 
+					p Cancelar
+				div#continue-btn.col-xs-3.div-btn
+					p Continuar
