@@ -25,7 +25,6 @@ class Product extends DatabaseModel {
 		+ " FROM " + this.tbname + " LEFT JOIN transaction ON (product.id = product_id)"
 		+ " WHERE product.state = 1"
 		+ " GROUP BY product.id ORDER BY execution_date DESC";
-		console.log(q);
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) callback(null);
 			else callback(rows);
@@ -36,7 +35,6 @@ class Product extends DatabaseModel {
 		+ " FROM " + this.tbname + " JOIN (transaction,transaction_sell) ON (product.id = product_id AND transaction.id = transaction_sell.transaction_id)"
 		+ " WHERE product.state = 2"
 		+ " ORDER BY execution_date DESC";
-		console.log(q);
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) callback([]);
 			else callback(rows);
@@ -48,7 +46,6 @@ class Product extends DatabaseModel {
 		+ " FROM " + this.tbname + " JOIN (transaction,transaction_pawn) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id)"
 		+ " WHERE product.state = 0"
 		+ " ORDER BY execution_date DESC";
-		console.log(q);
 		this.connection.query(q,function(err,rows) {
 			console.log(err);
 			if (err || !rows || rows.length == 0) callback([]);
@@ -73,7 +70,6 @@ class Product extends DatabaseModel {
 				+ ") as product_begin_date "
 				+ "ON (number_of_payments.id = product_begin_date.id) "
 				+ "ORDER BY debt DESC";
-		console.log(q);
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) callback([]);
 			else callback(rows);
@@ -118,6 +114,110 @@ class Product extends DatabaseModel {
 			});
 		}
 		getItems(0);
+	}
+
+
+	/* 
+	SELECT * FROM
+		(SELECT transaction.id ,'pawn' as 'type' from transaction JOIN transaction_pawn on (transaction.id = transaction_pawn.transaction_id))
+		UNION
+		(SELECT transaction.id ,'extension_payment' as 'type' from transaction JOIN transaction_extension_payment on (transaction.id = transaction_extension_payment.transaction_id))
+		UNION
+		(SELECT transaction.id ,'sell' as 'type' from transaction JOIN transaction_sell on (transaction.id = transaction_sell.transaction_id))
+		UNION
+		(SELECT transaction.id ,'shelf' as 'type' from transaction JOIN transaction_shelf on (transaction.id = transaction_shelf.transaction_id))
+		UNION
+		(SELECT transaction.id ,'shelf_to_pawn' as 'type' from transaction JOIN transaction_shelf_to_pawn on (transaction.id = transaction_shelf_to_pawn.transaction_id))
+	WHERE id = ?;
+
+
+	SELECT * FROM ( (SELECT transaction.id ,'pawn' as 'type' from transaction JOIN transaction_pawn on (transaction.id = transaction_pawn.transaction_id)) UNION (SELECT transaction.id ,'extension_payment' as 'type' from transaction JOIN transaction_extension_payment on (transaction.id = transaction_extension_payment.transaction_id)) UNION (SELECT transaction.id ,'sell' as 'type' from transaction JOIN transaction_sell on (transaction.id = transaction_sell.transaction_id)) UNION (SELECT transaction.id ,'shelf' as 'type' from transaction JOIN transaction_shelf on (transaction.id = transaction_shelf.transaction_id)) UNION (SELECT transaction.id ,'shelf_to_pawn' as 'type' from transaction JOIN transaction_shelf_to_pawn on (transaction.id = transaction_shelf_to_pawn.transaction_id))) AS TB1 WHERE id = 22
+	*/
+	deleteLastTransaction(callback) {
+		if (!this.attrs === undefined || (this.attrs.id === undefined)) {
+			callback(false);
+			return;
+		}
+		this.connection.beginTransaction((err) => {
+			if (err) {
+				connection.rollback();
+				connection.release();
+				callback(false);
+				return
+			}
+
+			// get last 2 transactions
+			var product_id = this.attrs.id;
+			var q = 'SELECT *, transaction.id as transaction_id FROM transaction LEFT JOIN (product) ON (transaction.product_id = product.id) WHERE product.id = ? ORDER BY transaction.created_at DESC, execution_date DESC LIMIT 2'
+			this.connection.query(q,[product_id],(err,rows) => {
+				if (err || !rows || rows.length == 0) {
+					connection.rollback();
+					connection.release();
+					callback(false);
+					return
+				}
+				var transaction_id = rows[0].transaction_id;
+
+				// delete
+				var q = 'DELETE FROM transaction WHERE id = ' + transaction_id;
+				this.connection.query(q,(err) => {
+					if (err) {
+						connection.rollback();
+						callback(false);
+						return
+					}
+					var q = "SELECT * FROM ("
+						+ " (SELECT transaction.id ,'pawn' as 'type' from transaction JOIN transaction_pawn on (transaction.id = transaction_pawn.transaction_id))"
+						+ " UNION"
+						+ " (SELECT transaction.id ,'extension_payment' as 'type' from transaction JOIN transaction_extension_payment on (transaction.id = transaction_extension_payment.transaction_id))"
+						+ " UNION"
+						+ " (SELECT transaction.id ,'sell' as 'type' from transaction JOIN transaction_sell on (transaction.id = transaction_sell.transaction_id))"
+						+ " UNION"
+						+ " (SELECT transaction.id ,'shelf' as 'type' from transaction JOIN transaction_shelf on (transaction.id = transaction_shelf.transaction_id))"
+						+ " UNION"
+						+ " (SELECT transaction.id ,'shelf_to_pawn' as 'type' from transaction JOIN transaction_shelf_to_pawn on (transaction.id = transaction_shelf_to_pawn.transaction_id))"
+					+ ") AS TB1 WHERE id = ?";
+
+					this.connection.query(q,[rows[1].transaction_id], (err,rows) => {
+
+						if (err || !rows || rows.length == 0) {
+							this.connection.rollback();
+							callback(false);
+							return
+						}
+						var transaction_type = rows[0].type;
+						var new_state = 0;
+						if (transaction_type == 'extension_payment' || transaction_type == 'pawn' || transaction_type == 'shelf_to_pawn')
+								new_state = 0; // pawn
+						if (transaction_type == 'sell')
+								new_state = 2; // sold
+						if (transaction_type == 'shelf')
+								new_state = 1; // shelf
+
+						this.set({
+							id : product_id,
+							state: new_state,
+						}).update((id) => {
+							if (!id) {
+								this.connection.rollback();
+								callback(false);
+								return
+							}
+
+							this.connection.commit((err) => {
+								if (err)  {
+									this.connection.rollback();
+									callback(false);
+								}
+								callback(true);
+							});
+
+						});
+					})
+				});
+			});	
+		});
+		
 	}
 
 

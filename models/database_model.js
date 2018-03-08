@@ -50,6 +50,7 @@ class DatabaseModel {
 
 		q += ' WHERE id = ?';
 
+		console.log(q);
 		var attrs_vals = attrs_keys.map(function(k) { return attrs[k]; });
 		connection.query(q,[...attrs_vals,id],function(err,result){
 			if (err) callback(null);
@@ -58,11 +59,27 @@ class DatabaseModel {
 	}
 
 	/*
+		delete a data entity if the id attr is set
+	*/
+	delete(callback,connection) {
+		connection = (connection ? connection : this.connection );
+		if (this.attrs.id === undefined) {
+			callback(null);
+			return;
+		}
+		var id = this.attrs.id;
+		var q = 'DELETE FROM ' + this.tbname + ' WHERE id = ?';
+		connection.query(q,[id],function(err,result) {
+			console.log(err);
+			callback(null);
+		});
+	}
+
+	/*
 	 save a new entity if the id|created_at attr is not set
 	*/
 	save(callback,connection) {
 		connection = (connection ? connection : this.connection );
-		console.log('XXX ' + this.attrs.id);
 		if ('id' in this.attrs || 'created_at' in this.attrs) {
 			callback(null);
 			return;
@@ -95,7 +112,10 @@ class DatabaseModel {
 	}
 
 	get(callback) {
-		if (this.attrs === undefined ) callback(null);
+		if (this.attrs === undefined ) {
+			callback(null);
+			return;
+		}
 		/* not id given, use where */
 		if (this.attrs.id === undefined) {
 			var attrs_keys = Object.keys(this.attrs);
@@ -149,6 +169,8 @@ class DatabaseModel {
 		});
 	}
 }
+
+
 
 module.exports = DatabaseModel;
 

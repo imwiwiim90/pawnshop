@@ -59,5 +59,19 @@ router.get('/history/:id',function(req, res, next) {
 	})
 });
 
+router.delete('/id/:id',function(req,res,next) {
+	var product = new Product();
+	product.set({id:req.params.id}).delete(function() {
+		res.send('success');
+	})
+})
+
+router.delete('/last_transaction/id/:id', function(req,res,next) {
+	var product = new Product();
+	product.set({id:req.params.id}).deleteLastTransaction(function(success) {
+		res.send(success);
+	});
+});
+
 
 module.exports = router;

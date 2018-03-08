@@ -16,6 +16,24 @@
 
 }
 
+#options-wrapper button {
+	background-color: white;
+	color: #5A85FF;
+    padding: 10px 15px;
+    border-radius: 13px;
+    border: 1px solid #5A85FF;
+    cursor: pointer;
+}
+#btn-back span {
+	margin-right: 3px;
+}
+
+#btn-delete {
+	color: red!important;
+	float: right;
+	border-color: red!important;
+}
+
 #product-inventory-id-wrapper {
 	display: block;
 	float: right;
@@ -56,6 +74,14 @@
 .history-item-title span, .history-item-body span {
 	margin-right: 40px;
 }
+.btn-delete-last-transaction {
+	font-size: 18px;
+	color: red;
+	text-align: right;
+	font-weight: 100;
+	opacity: 0.5;
+	cursor: pointer;
+}
 .transaction-type {
 	font-family: "Comfortaa", cursive;
 	font-weight: 900;
@@ -70,4 +96,39 @@
 .transaction-date {
 	color : #9277C8;
 	opacity: 0.5;
+}
+
+
+#delete-container {
+	position: fixed;
+	top: 0;
+	display: block;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0,0,0,0.8);
+}
+#delete-main-container {
+	background-color: white;
+	top: 40%;
+	padding-bottom: 20px;
+	padding-top: 30px;
+}
+#delete-main-container h2 {
+	color: #707070;
+	font-family: "Comfortaa", cursive;
+}
+
+#delete-main-container button {
+	background-color: white;
+	color: #5A85FF;
+    padding: 10px 15px;
+    border-radius: 13px;
+    border: 1px solid #5A85FF;
+    cursor: pointer;
+}
+
+#btn-delete-accept {
+	color: red!important;
+	border-color: red!important;
+	margin-right: 10px;
 }

@@ -50,6 +50,8 @@ router.post('/shelf_to_pawn/new',function(req, res, next){
 	});
 });
 
+router.delete('/id/:id');
+
 
 
 

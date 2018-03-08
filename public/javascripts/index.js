@@ -52,6 +52,8 @@ $(document).ready(function(){
 		],
 	}
 
+	$('#search-wrapper').hide();
+
 	function capFirstLetterWord(str) {
 		return str.replace(/\b\w/g,(l) => (l.toUpperCase()));
 	}
@@ -65,13 +67,13 @@ $(document).ready(function(){
 	function getTableData(type) {
 		var _class = 'product';
 		if (type == 'client') _class = 'client';
+		setSearchBox(key_search[type]);
 		$.ajax({
 			method : "GET",
 			url : base_path + api_path[type],
 		}).done(function(data){
 			table_data = data;
 			fillTable(data,key_to_name[type],_class);
-			setSearchBox(key_search[type]);
 		});
 	}
 	/*

@@ -6,6 +6,7 @@ $(document).ready(function() {
 	var local_path_id_i = local_path.lastIndexOf('/');
 	var product_id = local_path.substr(local_path_id_i+1,local_path.length);
 
+	$('#delete-container').hide();
 
 	function transactionHTML(transaction) {
 		var type_name = {
@@ -18,11 +19,11 @@ $(document).ready(function() {
 
 		var transaction_body_tag = '';
 		if (transaction.type == 'pawn' || transaction.type == 'sell')
-			transaction_body_tag = "<span>" + transaction.price + "</span>";
+			transaction_body_tag = "<span>$" + transaction.price + "</span>";
 		if (transaction.type == 'extension_payment') 
 			transaction_body_tag = 
 				  "<span>" + transaction.number_of_payments + "</span>"
-				+ "<span>" + transaction.payment + "</span>";
+				+ "<span>$" + transaction.payment + "</span>";
 
 		return "<div class='history-item'>"
 			+ "<p class='history-item-title'>"
@@ -61,6 +62,43 @@ $(document).ready(function() {
 		transactions.forEach((transaction) => {
 			console.log('transaction');
 			$container.append(transactionHTML(transaction));
+		});
+
+		if (transactions.length > 1 ) {
+			var historyItem1 = $($('.history-item').get(0));
+			var historyTitle1 = $(historyItem1.find('.history-item-title')[0]);
+			historyTitle1.append('<span class="btn-delete-last-transaction glyphicon glyphicon-remove-circle"></span>')
+		}
+
+	});
+
+	$('#btn-back').on('click',function(){
+		window.location.href = '/';
+	})
+
+	$('#btn-delete').on('click',function(){
+		$('#delete-container').show();
+	});
+
+	$('#btn-delete-cancel').on('click',function(){
+		$('#delete-container').hide();
+	});
+	$('#btn-delete-accept').on('click',function(){
+		$.ajax({
+			method: 'DELETE',
+			url : app_url + '/api/product/id/' + product_id,
+		}).done(function(){
+			window.location.href = '/';
+		})
+	});
+
+	$('#product-history').on('click','.btn-delete-last-transaction',function() {
+		console.log('his');
+		$.ajax({
+			method: 'DELETE',
+			url : app_url + '/api/product/last_transaction/id/' + product_id,
+		}).done(function() {
+			window.location.href = window.location.pathname;
 		});
 	});
 

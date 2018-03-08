@@ -9,8 +9,13 @@ block scripts
 	script(src="/javascripts/product.js")
 
 block content
-	div#main-container.white.container.col-md-6.col-md-offset-4
+	div#main-container.white.container.col-md-6.col-md-offset-3
 		div#product-header
+			div#options-wrapper
+				button#btn-back 
+					span.glyphicon.glyphicon-chevron-left
+					| atras
+				button#btn-delete borrar
 			h2#product-inventory-id-wrapper ID #<span id='product-inventory-id'></span>
 			h1#product-name 
 			p#product-description
@@ -22,3 +27,9 @@ block content
 				p
 		div#product-history
 			div.history-item
+	div#delete-container
+		div#delete-main-container.col-sm-6.col-sm-offset-3
+			h2 Esta seguro de borrar el producto?
+			button#btn-delete-accept Aceptar
+			button#btn-delete-cancel Cancelar
+			div.clearfix

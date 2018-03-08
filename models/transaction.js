@@ -135,7 +135,8 @@ class Transaction extends DatabaseModel {
 		var attrs_keys = Object.keys(attrs);
 		var attrs_vals = attrs_keys.map((k) => this.attrs[k])
 
-		attrs_keys.forEach(function(k) {
+		attrs_keys.forEach((k) => {
+			if (k == 'id') k = this.tbname + '.id';
 			where += ' ' + k + ' = ? AND';
 		});
 		where = where.slice(0,-3);
@@ -149,7 +150,6 @@ class Transaction extends DatabaseModel {
 			else callback(rows);
 		})
 	}
-
 }
 
 class Pawn extends Transaction {
