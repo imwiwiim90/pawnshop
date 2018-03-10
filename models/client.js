@@ -26,10 +26,10 @@ class Client extends DatabaseModel {
 		}
 
 		var q = "SELECT product.id as id, inventory_id, product.name as name, price, execution_date"
-		+ " FROM PRODUCT"
-		+ " JOIN (TRANSACTION,TRANSACTION_PAWN,CLIENT)"
-		+ " ON (PRODUCT.id = TRANSACTION.product_id AND TRANSACTION.client_id = CLIENT.id and TRANSACTION.id = TRANSACTION_PAWN.transaction_id)"
-		+ " where CLIENT.id = ?";
+		+ " FROM product"
+		+ " JOIN (transaction,transaction_pawn,client)"
+		+ " ON (product.id = transaction.product_id AND transaction.client_id = client.id and transaction.id = transaction_pawn.transaction_id)"
+		+ " where client.id = ?";
 
 		console.log(q);
 		this.connection.query(q,[this.attrs.id],(err,rows) => {
