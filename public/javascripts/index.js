@@ -206,6 +206,10 @@ $(document).ready(function(){
 		if (_class == 'product') {
 			window.location.href = base_path + '/product/id/' + $(this).attr('item-id');
 		}
+
+		if (_class == 'client') {
+			window.location.href = base_path + '/client/id/' + $(this).attr('item-id');
+		}
 	})
 	
 

@@ -20,6 +20,15 @@ router.get('/cc/:cc', function(req, res, next) {
 	})
 });
 
+router.get('/pawn/id/:id', function(req,res,next) {
+	var client = new Client();
+	client.set({
+		id : req.params.id,
+	}).getPawn(function(products) {
+		res.json(products);
+	});
+});	
+
 router.get('/all',function(req,res,next){
 	var client = new Client();
 	client.all(function(clients) {
