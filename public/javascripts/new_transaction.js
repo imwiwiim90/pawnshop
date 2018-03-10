@@ -77,6 +77,9 @@ $(document).ready(function(){
 					}
 					setDynamicContainer('success');
 				});
+			},
+			validate: function() {
+				if ($('#inpt-execution-date').val() == '') return 'Elija una fecha';
 			}
 		},
 		'first' : {
@@ -88,6 +91,7 @@ $(document).ready(function(){
 			},
 			accept : function () {
 				setSelectedTransaction();
+				onLoad(true);
 				getProductByInventoryId($('#product-id').val(),function(_product){
 					product = _product;
 					if (current_transaction == 'pawn') {
@@ -129,6 +133,10 @@ $(document).ready(function(){
 
 				});
 			},
+			validate: function() {
+				var pid = $('#product-id').val();
+				if (pid == '') return 'Ingrese un id de producto';
+			},
 			cancel : redirectMainPage,
 		},
 		'success' : {
@@ -153,6 +161,10 @@ $(document).ready(function(){
 					}
 					setDynamicContainer('success');
 				});
+			},
+			validate: function() {
+				if ($('#inpt-execution-date').val() == '') return 'Elija una fecha';
+				if ($('#inpt-sell-price').val() == '') return 'Ingrese el precio al que se vendió';
 			}
 		},
 		'extension_payment' : {
@@ -173,7 +185,13 @@ $(document).ready(function(){
 					}
 					setDynamicContainer('success');
 				});
-			}
+			},
+			validate: function() {
+				console.log(product);
+				if ($('#inpt-execution-date').val() == '') return 'Es obligatorio la fecha de la prórroga';
+				if ($('#inpt-extension-payment-price').val() == '') return 'Es obligatorio la cantidad pagada';
+				if ($('#inpt-number-of-payments').val() == '') return 'Es obligatorio el número de empeños pagados';
+			},
 		},
 		'search_client' : {
 			retrieved : false,
@@ -237,6 +255,10 @@ $(document).ready(function(){
 					}
 				})
 				
+			},
+			validate: function() {
+				if ($('#inpt-client-name').val() == '') return 'Es obligatorio el nombre del cliente';
+				if ($('#inpt-client-cc').val() == '') return 'Es obligatorio la cédula del cliente';
 			}
 		},
 		'pawn' : {
@@ -262,6 +284,11 @@ $(document).ready(function(){
 					}
 					setDynamicContainer('success');
 				});
+			},
+			validate: function() {
+				if ($('#inpt-product-price').val() == '') return 'Es obligatorio el precio del empeño';
+				if ($('#inpt-execution-date').val() == '') return 'Es obligatorio la fecha del empeño';
+				if ($('#inpt-product-name').val() == '') return 'Ingrese el nombre del producto';
 			}
 		}
 		
@@ -284,14 +311,26 @@ $(document).ready(function(){
 	function setDynamicContainer(view_name) {
 		var	callback = dynamicContainerViews[view_name].callback;
 		function after() {
+			onLoad(false);
+			displayErrorMsg();
 			if (dynamicContainerViews[view_name].title) $('#title').html(dynamicContainerViews[view_name].title);
 			else $('#title').html(transaction_names[current_transaction]);
 			$("#dynamic-container").html(dynamicContainerViews[view_name].html);
 			$('#btns-container').show();
 			var accept_callback = dynamicContainerViews[view_name].accept;
+			var validate = dynamicContainerViews[view_name].validate;
 			var cancel_callback = dynamicContainerViews[view_name].cancel;
 			$('#continue-btn').off('click');  
-			if (accept_callback) $('#continue-btn').on('click',accept_callback);
+			if (accept_callback) {
+				if (validate) 
+					$('#continue-btn').on('click',function(){
+						var msg = validate();
+						if (msg) displayErrorMsg(msg);
+						else accept_callback();
+					});
+				else
+					$('#continue-btn').on('click',accept_callback);
+			}
 
 			$('#cancel-btn').off('click');
 			if (cancel_callback) $('#cancel-btn').on('click',cancel_callback);
@@ -356,7 +395,33 @@ $(document).ready(function(){
 		});
 		return numeric_val;
 	}
+
+	/*
+		shows a loading icon if state == true
+		hides icon, show btns if state == false 
+	*/
+	$('#loading-container').hide();
+	function onLoad(state) {
+		var $cont = $('#loading-container');
+		var $bcont = $('#btns-container');
+		if (state) {
+			$cont.show()
+			$bcont.hide();
+		} else {
+			$cont.hide();
+			$bcont.show();
+		}
+	}
 	
+	$('#error-msg').hide();
+	function displayErrorMsg(msg) {
+		if (!msg) {
+			$('#error-msg').hide();
+			return;
+		}
+		$('#error-msg').show();
+		$('#error-msg').html(msg);
+	}
 
 	function uploadTransaction(type,callback) {
 		$.ajax({

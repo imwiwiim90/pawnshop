@@ -73,7 +73,16 @@ $(document).ready(function(){
 			url : base_path + api_path[type],
 		}).done(function(data){
 			table_data = data;
+			if (_class == 'product') {
+				table_data.sort(function(a,b) {
+					if (a.inventory_id < b.inventory_id) return -1;
+					if (a.inventory_id > b.inventory_id) return 1;
+					return 0;
+				})	
+			}
+
 			fillTable(data,key_to_name[type],_class);
+
 		});
 	}
 	/*
@@ -89,7 +98,9 @@ $(document).ready(function(){
 			var thead = $('#main-table thead tr');
 			thead.html('');
 			headers.forEach(function(header) {
-				thead.append('<th>' + header[1] + '</th>');
+				var $th = $('<th>' + header[1] + '</th>');
+				$th.attr('_class_key',header[0]);
+				thead.append($th);
 			});
 		} else {
 			headers = curr_headers;
@@ -120,6 +131,27 @@ $(document).ready(function(){
 		})
 
 	}
+
+	$('#main-table thead').on('click','th',function(){
+		var reverse = 1;
+
+		if ($(this).hasClass('order-th')) {
+			reverse = -1;
+			$('.order-th').removeClass('order-th');
+		} else $(this).addClass('order-th');
+
+
+		var key = $(this).attr('_class_key');
+		table_data.sort(function(a,b) {
+			if (a[key] < b[key]) return -1*reverse;
+			if (a[key] > b[key]) return 1*reverse;
+			return 0;
+		})
+
+		
+
+		fillTable(table_data);
+	});
 	/*
 		keys
 			[ [key,name] ]

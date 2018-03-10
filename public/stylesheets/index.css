@@ -100,12 +100,13 @@
 #main-table thead th {
 	border-bottom-width: 0px;
 	padding-left: 5%;
+	cursor: pointer;
 }
 
 #main-table tbody td {
 	border-top-width: 0px;
-	color: #C5C5C5;
-	font-weight: 300;
+	color: #4c4c4c;
+	font-weight: 900;
 	padding-left: 5%;
 }
 
