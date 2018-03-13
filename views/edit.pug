@@ -1,0 +1,27 @@
+extends layout
+
+block styles
+	link(rel='stylesheet', href='/stylesheets/edit.css')
+
+block scripts
+	script(src='/javascripts/edit.js')
+
+block content
+	div#main-container.white.container.col-md-6.col-md-offset-3
+		div#header
+			h1 Editar #{_class.name}
+
+		form(action=url method='post' )
+			input(type='hidden' value=obj.id name='id')
+			- for (var i = 0; i < _class.attrs.length; i++)
+				- var item = _class.attrs[i];
+				case item.type
+					when 'string'
+						label= item.name
+						input(type='text' name=item.key value=obj[item.key])
+					when 'number'
+						label= item.name
+						input(type='number' name=item.key value=obj[item.key])
+			div#btns-wrapper
+				input#btn-accept(type='submit' value='Aceptar')
+				button#btn-cancel(type='button' onclick='window.history.back()') Cancelar

@@ -50,4 +50,8 @@ $(document).ready(function() {
 		var pID = $(this).attr('product_id');
 		window.location.href = app_url + '/product/id/' + pID;
 	})
+
+	$('#btn-edit').on('click',function(){
+		window.location.href = '/client/edit/' + client_id;
+	});
 })

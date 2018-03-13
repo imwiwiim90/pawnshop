@@ -60,4 +60,15 @@ router.put('/update',function(req,res,next) {
 	})
 });
 
+router.post('/update',function(req,res,next) {
+	var client = new Client();
+	client.set({
+		'name' : req.body.name.toLowerCase(),
+		'cc' : req.body.cc,
+		'id' : req.body.id,
+	}).update(function(client_id) {
+		res.redirect('/client/id/'+ req.body.id);
+	})
+});
+
 module.exports = router;
