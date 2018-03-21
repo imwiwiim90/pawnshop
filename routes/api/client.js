@@ -65,6 +65,7 @@ router.post('/update',function(req,res,next) {
 	client.set({
 		'name' : req.body.name.toLowerCase(),
 		'cc' : req.body.cc,
+		'phone' : req.body.phone,
 		'id' : req.body.id,
 	}).update(function(client_id) {
 		res.redirect('/client/id/'+ req.body.id);
