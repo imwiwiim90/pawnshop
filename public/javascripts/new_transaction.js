@@ -2,6 +2,7 @@ $(document).ready(function(){
 	var base_path = window.location.protocol + '//' + window.location.hostname + (window.location.port? ':' + window.location.port : '');
 	var api_path  = {
 		'product_inventory_id' : '/api/product/inventory_id/',
+		'product_pawn' : '/api/transaction/pawn/product_id/',
 		'new_transaction' : '/api/transaction/{type}/new',
 		'client_cc' : '/api/client/cc/',
 		'new_client' : '/api/client/new',
@@ -31,6 +32,7 @@ $(document).ready(function(){
 	var transaction_names = {
 		'shelf' : 'Saca',
 		'sell' : 'Venta',
+		'close' : 'Cierre',
 		'extension_payment' : 'Prórroga',
 		'shelf_to_pawn' : 'Venta a empeño',
 		'pawn' : 'Empeño',
@@ -59,6 +61,8 @@ $(document).ready(function(){
 					setDynamicContainer('get_execution_date');
 				if (current_transaction == 'sell')
 					setDynamicContainer('sell');
+				if (current_transaction == 'close')
+					setDynamicContainer('close')
 				if (current_transaction == 'extension_payment')
 					setDynamicContainer('extension_payment');
 
@@ -124,6 +128,10 @@ $(document).ready(function(){
 					else if (current_transaction == 'shelf_to_pawn' && product.state != 1) {
 						setMsgError('not-shelf');
 						setDynamicContainer('error');
+					} 
+					else if (current_transaction == 'close' && product.state != 0) {
+						setMsgError('not-pawn');
+						setDynamicContainer('error');
 					}
 					/* SUCCESS */
 					else {
@@ -165,6 +173,34 @@ $(document).ready(function(){
 			validate: function() {
 				if ($('#inpt-execution-date').val() == '') return 'Elija una fecha';
 				if ($('#inpt-sell-price').val() == '') return 'Ingrese el precio al que se vendió';
+			}
+		},
+		'close' : {
+			retrieved: false,
+			title : null,
+			callback : function() {
+				$("#inpt-close-payment").on('input',inputPriceOnChange);
+				getProdutPawn(product.id,function(pawn) {
+					var suggested_payment = String(Number(pawn.price)*1.1);
+					$('#pawn-price').html(moneyFormat(pawn.price))
+					$('#inpt-close-payment').val(suggested_payment).trigger('input');
+				});
+			},
+			accept : function() {
+				transaction.execution_date = $('#inpt-execution-date').val();
+				transaction.payment = getPriceVal('#inpt-close-payment');
+				uploadTransaction('close',(id) => {
+					if (isNaN(parseInt(id))) {
+						setMsgError('unknown');
+						setDynamicContainer('error');
+						return
+					}
+					setDynamicContainer('success');
+				});
+			},
+			validate: function() {
+				if ($('#inpt-execution-date').val() == '') return 'Elija una fecha';
+				if ($('#inpt-close-payment').val() == '') return 'Ingrese el precio al que se vendió';
 			}
 		},
 		'extension_payment' : {
@@ -301,6 +337,9 @@ $(document).ready(function(){
 	}
 
 	function defaultCancelCallback() {
+		transaction = {};
+		product = {};
+		client = {};
 		setDynamicContainer('first');
 	}
 
@@ -353,6 +392,11 @@ $(document).ready(function(){
 
 	function inputPriceOnChange() {
 		var val = $(this).val();
+		$(this).val(moneyFormat(val));
+	}
+
+	function moneyFormat(str) {
+		var val = str
 		var numeric_val = '';
 		val.split('').forEach((c) => {
 			if (numeric_val == '' && c == '0') return;
@@ -373,7 +417,7 @@ $(document).ready(function(){
 
 		if (numeric_val)
 		numeric_val = "$ " + numeric_val;
-		$(this).val(numeric_val);
+		return numeric_val;
 	}
 
 	function inputNumeric(e) {
@@ -441,6 +485,12 @@ $(document).ready(function(){
 		}).done(callback);
 	}
 
+	function getProdutPawn(id,callback) {
+		$.ajax({
+			method: 'GET',
+			url : base_path + api_path.product_pawn + id,
+		}).done(callback);
+	}
 	function getClientByCC(cc,callback) {
 		$.ajax({
 			method : "GET",

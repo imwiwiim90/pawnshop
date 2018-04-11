@@ -37,11 +37,26 @@ router.get('/sold',function(req,res,next) {
 	});
 });
 
+router.get('/closed', function(req,res,next) {
+	var product = new Product();
+	product.getClosed(null,function(products) {
+		res.json(products);
+	});
+})
+
 router.get('/pawn',function(req,res,next) {
 	var product = new Product();
 	product.getPawn(null,function(products) {
 		console.log(products);
 		res.json(products);
+	});
+});
+
+router.get('/pawn/:id',function(req,res,next) {
+	var product = new Product();
+	product.set({id:req.params.id}).getPawn(null,function(product){
+		console.log(product);
+		res.json(product);
 	});
 });
 

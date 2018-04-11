@@ -15,11 +15,14 @@ $(document).ready(function() {
 			'sell': 'venta',
 			'shelf': 'saca',
 			'shelf_to_pawn': 'devuelta a empeño',
+			'close': 'cierre',
 		};
 
 		var transaction_body_tag = '';
 		if (transaction.type == 'pawn' || transaction.type == 'sell')
 			transaction_body_tag = "<span>$" + transaction.price + "</span>";
+		if (transaction.type == 'close')
+			transaction_body_tag = "<span>$" + transaction.payment + "</span>";
 		if (transaction.type == 'extension_payment') 
 			transaction_body_tag = 
 				  "<span>" + transaction.number_of_payments + "</span>"
@@ -48,6 +51,7 @@ $(document).ready(function() {
 		if (product.state == 0) $state = $('#state-pawn');
 		if (product.state == 1) $state = $('#state-shelf');
 		if (product.state == 2) $state = $('#state-sold');
+		if (product.state == 3) $state = $('#state-closed');
 		$state.addClass('highlight');
 
 	});

@@ -228,8 +228,20 @@ class ShelfToPawn extends Transaction {
 	}
 }
 
+class Close extends Transaction {
+	constructor() {
+		var attr = [
+			"payment",
+		];
+		super('close',attr);
+		this.attr = attr;
+		this.after_product_state = 3;
+	}
+}
+
 exports.Sell = Sell;
 exports.Shelf = Shelf;
 exports.ExtensionPayment = ExtensionPayment;
 exports.Pawn = Pawn;
 exports.ShelfToPawn = ShelfToPawn;
+exports.Close = Close;

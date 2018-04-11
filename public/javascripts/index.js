@@ -11,13 +11,20 @@ $(document).ready(function(){
 		pawn : '/api/product/pawn',
 		shelf : '/api/product/shelf',
 		expired : '/api/product/expired',
-		client : '/api/client/all'
+		client : '/api/client/all',
+		closed : '/api/product/closed',
 	}
 	var key_to_name = {
 		'sold' : [
 			['inventory_id','ID'],
 			['name','Producto'],
 			['price','Precio'],
+			['execution_date','Fecha'],
+		],
+		'closed' : [
+			['inventory_id','ID'],
+			['name','Producto'],
+			['payment','Pago'],
 			['execution_date','Fecha'],
 		],
 		'pawn' : [

@@ -5,6 +5,7 @@ var DatabaseModel = require('./database_model');
 	0 -> pawn
 	1 -> shelf
 	2 -> sold
+	3 -> closed
 */
 
 class Product extends DatabaseModel {
@@ -34,6 +35,23 @@ class Product extends DatabaseModel {
 		var q = "SELECT name, execution_date, inventory_id, price, "+ this.tbname +".id"  
 		+ " FROM " + this.tbname + " JOIN (transaction,transaction_sell) ON (product.id = product_id AND transaction.id = transaction_sell.transaction_id)"
 		+ " WHERE product.state = 2"
+		+ " ORDER BY execution_date DESC";
+		this.connection.query(q,function(err,rows) {
+			if (err || !rows || rows.length == 0) callback([]);
+			else callback(rows);
+		});
+	}
+
+	/*
+	SELECT name, execution_date, payment, inventory_id
+	FROM [product] JOIN ([transaction,transaction_close]) ON (product.id = product_id AND transaction.id = transaction_close.transaction_id)
+	WHERE product.state = 3
+	ORDER BY execution_date DESC
+	*/
+	getClosed(limits,callback) {
+		var q = " SELECT name, execution_date, payment, inventory_id, " + this.tbname + ".id"
+		+ " FROM " + this.tbname + " JOIN (transaction,transaction_close) ON (product.id = product_id AND transaction.id = transaction_close.transaction_id)"
+		+ " WHERE product.state = 3"
 		+ " ORDER BY execution_date DESC";
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) callback([]);
@@ -86,6 +104,7 @@ class Product extends DatabaseModel {
 			require('./transaction').Sell,
 			require('./transaction').Shelf,
 			require('./transaction').ShelfToPawn,
+			require('./transaction').Close,
 		];
 		var transactionNames = [
 			'extension_payment',
@@ -93,6 +112,7 @@ class Product extends DatabaseModel {
 			'sell',
 			'shelf',
 			'shelf_to_pawn',
+			'close',
 		]
 		// recursive call through all classes
 		function getItems(i) {

@@ -7,7 +7,7 @@
 6 silly lifecycle pawnshop@0.0.0~prestart: no script for prestart, continuing
 7 info lifecycle pawnshop@0.0.0~start: pawnshop@0.0.0
 8 verbose lifecycle pawnshop@0.0.0~start: unsafe-perm in lifecycle true
-9 verbose lifecycle pawnshop@0.0.0~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/imwiwiim90/Desktop/Proyects/pawnshop/node_modules/.bin:/Users/imwiwiim90/anaconda2/bin:/Users/imwiwiim90/.composer/vendor/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/mysql/bin:/Applications/microchip/xc8/v1.41/bin
+9 verbose lifecycle pawnshop@0.0.0~start: PATH: /usr/local/lib/node_modules/npm/bin/node-gyp-bin:/Users/imwiwiim90/Desktop/Proyects/pawnshop/node_modules/.bin:/Users/imwiwiim90/Desktop/Open/firstMVP/openmvp/venv/bin:/Users/imwiwiim90/anaconda2/bin:/Users/imwiwiim90/.composer/vendor/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/mysql/bin:/Applications/microchip/xc8/v1.41/bin
 9 verbose lifecycle export PATH=/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/mysql/bin:~/Desktop/imwi_bash
 10 verbose lifecycle pawnshop@0.0.0~start: CWD: /Users/imwiwiim90/Desktop/Proyects/pawnshop
 11 silly lifecycle pawnshop@0.0.0~start: Args: [ '-c', 'node ./bin/www' ]

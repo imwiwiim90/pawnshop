@@ -4,6 +4,7 @@ var router = express.Router();
 var ExtensionPayment = require('../../models/transaction').ExtensionPayment;
 var Pawn = require('../../models/transaction').Pawn;
 var Sell = require('../../models/transaction').Sell;
+var Close = require('../../models/transaction').Close;
 var Shelf = require('../../models/transaction').Shelf;
 var ShelfToPawn = require('../../models/transaction').ShelfToPawn;
 
@@ -13,6 +14,14 @@ router.get('/pawn/id/:id', function(req, res, next) {
   pawn.set({id: req.params.id}).get(function(p) {
   	res.json(p);
   });
+});
+
+router.get('/pawn/product_id/:id', function(req, res, next) {
+	var pawn = new Pawn();
+	pawn.set({product_id: req.params.id}).get(function(pawns){
+		if (pawns.length >= 1) res.json(pawns[0]);
+		else res.json(null);
+	})
 });
 
 router.post('/extension_payment/new', function(req, res, next){
@@ -34,6 +43,13 @@ router.post('/sell/new', function(req, res, next){
 	sell.set(req.body).save(function(id){
 		res.send(String(id));
 	});
+});
+
+router.post('/close/new', function(req, res, nex) {
+	var close = new Close();
+	close.set(req.body).save(function(id) {
+		res.send(String(id));
+	})
 });
 
 router.post('/shelf/new',function(req, res, next){
