@@ -181,7 +181,7 @@ $(document).ready(function(){
 			callback : function() {
 				$("#inpt-close-payment").on('input',inputPriceOnChange);
 				getProdutPawn(product.id,function(pawn) {
-					var suggested_payment = String(Number(pawn.price)*1.1);
+					var suggested_payment = String(Math.round(Number(pawn.price)*1.1));
 					$('#pawn-price').html(moneyFormat(pawn.price))
 					$('#inpt-close-payment').val(suggested_payment).trigger('input');
 				});
