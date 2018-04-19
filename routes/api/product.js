@@ -74,6 +74,13 @@ router.get('/history/:id',function(req, res, next) {
 	})
 });
 
+router.get('/client/:id',function(req, res, next) {
+	var product = new Product();
+	product.set({id:req.params.id}).client(function(client) {
+		res.json(client);
+	})
+});
+
 router.delete('/id/:id',function(req,res,next) {
 	var product = new Product();
 	product.set({id:req.params.id}).delete(function() {

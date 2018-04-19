@@ -136,6 +136,24 @@ class Product extends DatabaseModel {
 		getItems(0);
 	}
 
+	client(callback) {
+		if (this.attrs === undefined || this.attrs.id === undefined) {
+			callback(null);
+			return;
+		}
+
+		var pid = this.attrs.id;
+		var q = " SELECT client.id as id, client.name as name" 
+		+ " FROM transaction JOIN (transaction_pawn,product,client)"
+		+ " ON (transaction_pawn.transaction_id = transaction.id AND transaction.product_id = product.id AND transaction.client_id = client.id)"
+		+ " WHERE product.id = ?";
+
+		this.connection.query(q,[pid],function(err,rows){
+			if (err || !rows || rows.length == 0) callback(null);
+			else callback(rows[0]);
+		});
+	}
+
 
 	/* 
 	SELECT * FROM

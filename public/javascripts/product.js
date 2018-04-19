@@ -76,6 +76,15 @@ $(document).ready(function() {
 
 	});
 
+	// get client
+	$.ajax({
+		method: 'GET',
+		url: app_url + '/api/product/client/' + product_id,
+	}).done((client) => {
+		$('#product-client-name').html(client.name);
+		$('#product-client-name').attr('href',app_url + '/client/id/' + client.id);
+	})
+
 	$('#btn-back').on('click',function(){
 		window.location.href = '/';
 	})

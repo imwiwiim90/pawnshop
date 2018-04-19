@@ -43,6 +43,19 @@
 	letter-spacing: 2px;
 }
 
+#product-client-name {
+	clear: both;
+	margin-top: 7px;
+	display: block;
+	float: right;
+	font-weight: 900;
+	font-size: 15px;
+	color: #6793FF;
+	font-family: "Comfortaa", cursive;
+	letter-spacing: 2px;
+	cursor: pointer;
+}
+
 #product-name {
 	color: #707070;
 	font-family: "Comfortaa", cursive;
