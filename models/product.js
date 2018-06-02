@@ -72,22 +72,25 @@ class Product extends DatabaseModel {
 	}
 
 	getExpired(limits,callback) {
-		var q = "SELECT * , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt FROM ( "
-					+ "SELECT product.id as id, SUM(number_of_payments) as payments "
-					+ "FROM product JOIN (transaction,transaction_extension_payment) "
-					+ "ON (product.id = transaction.product_id AND transaction.id = transaction_extension_payment.transaction_id ) "
-					+ "WHERE product.state = 0 "
-					+ "GROUP BY product.id "
-				+ ") as number_of_payments JOIN "
-				+ "("
-					+ "SELECT product.id as id ,inventory_id ,name, min(execution_date) as begin_date "
-					+ "FROM product INNER JOIN (transaction) "
-					+ "ON (product.id = product_id) "
-					+ "WHERE product.state = 0 "
-					+ "GROUP BY product.id "
-				+ ") as product_begin_date "
-				+ "ON (number_of_payments.id = product_begin_date.id) "
-				+ "ORDER BY debt DESC";
+		var q = "SELECT * , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt FROM ( " +
+					"SELECT id ,IFNULL(payments,0) as payments FROM (" +
+						"SELECT product.id as id, SUM(number_of_payments) as payments " +
+						"FROM product LEFT JOIN (transaction,transaction_extension_payment) " +
+						"ON (product.id = transaction.product_id AND transaction.id = transaction_extension_payment.transaction_id ) " +
+						"WHERE product.state = 0 " +
+						"GROUP BY product.id" +
+					") as nop" +
+				") as number_of_payments JOIN " +
+				"(" +
+					"SELECT product.id as id ,inventory_id ,name, min(execution_date) as begin_date " +
+					"FROM product INNER JOIN (transaction) " +
+					"ON (product.id = product_id) " +
+					"WHERE product.state = 0 " +
+					"GROUP BY product.id " +
+				") as product_begin_date " +
+				"ON (number_of_payments.id = product_begin_date.id)" +
+				"HAVING debt > 0" +
+				"ORDER BY debt DESC" ;
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) callback([]);
 			else callback(rows);
