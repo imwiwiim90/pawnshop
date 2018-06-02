@@ -136,7 +136,7 @@ $(document).ready(function(){
 					/* SUCCESS */
 					else {
 						current_product = product;
-						setDynamicContainer('product_info',dynamicContainerViews.product_info.callback);
+						setDynamicContainer('product_info');
 					}
 
 				});
