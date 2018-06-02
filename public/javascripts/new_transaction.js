@@ -224,6 +224,7 @@ $(document).ready(function(){
 			},
 			validate: function() {
 				console.log(product);
+				if ($('#inpt-execution-date:invalid').length != 0) return 'La fecha ingresada no es válida';
 				if ($('#inpt-execution-date').val() == '') return 'Es obligatorio la fecha de la prórroga';
 				if ($('#inpt-extension-payment-price').val() == '') return 'Es obligatorio la cantidad pagada';
 				if ($('#inpt-number-of-payments').val() == '') return 'Es obligatorio el número de empeños pagados';
