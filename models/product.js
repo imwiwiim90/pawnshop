@@ -92,7 +92,10 @@ class Product extends DatabaseModel {
 				"HAVING debt > 0" +
 				"ORDER BY debt DESC" ;
 		this.connection.query(q,function(err,rows) {
-			if (err || !rows || rows.length == 0) callback([]);
+			if (err || !rows || rows.length == 0) {
+				console.log(err)
+				callback([]);
+			}
 			else callback(rows);
 		});
 	}
