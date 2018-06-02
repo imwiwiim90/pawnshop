@@ -135,8 +135,11 @@ $(document).ready(function(){
 					}
 					/* SUCCESS */
 					else {
-						current_product = product;
-						setDynamicContainer('product_info');
+						getProductPawn(_product.id,function(_pawn) {
+							product.pawn = _pawn;
+							current_product = product;
+							setDynamicContainer('product_info');
+						});
 					}
 
 				});
@@ -180,7 +183,7 @@ $(document).ready(function(){
 			title : null,
 			callback : function() {
 				$("#inpt-close-payment").on('input',inputPriceOnChange);
-				getProdutPawn(product.id,function(pawn) {
+				getProductPawn(product.id,function(pawn) {
 					var suggested_payment = String(Math.round(Number(pawn.price)*1.1));
 					$('#pawn-price').html(moneyFormat(pawn.price))
 					$('#inpt-close-payment').val(suggested_payment).trigger('input');
@@ -223,11 +226,17 @@ $(document).ready(function(){
 				});
 			},
 			validate: function() {
-				console.log(product);
 				if ($('#inpt-execution-date:invalid').length != 0) return 'La fecha ingresada no es válida';
 				if ($('#inpt-execution-date').val() == '') return 'Es obligatorio la fecha de la prórroga';
 				if ($('#inpt-extension-payment-price').val() == '') return 'Es obligatorio la cantidad pagada';
 				if ($('#inpt-number-of-payments').val() == '') return 'Es obligatorio el número de empeños pagados';
+
+				// date after pawn date
+				var inputDate = new Date($('#inpt-execution-date').val());
+				var pawnDate  = new Date(product.pawn.execution_date);
+				if (inputDate < pawnDate) return 'la fecha de la prórroga debe ser después de la fecha de empeño, La fecha de empeño fue ' + pawnDate.toLocaleDateString();
+
+
 			},
 		},
 		'search_client' : {
@@ -486,7 +495,7 @@ $(document).ready(function(){
 		}).done(callback);
 	}
 
-	function getProdutPawn(id,callback) {
+	function getProductPawn(id,callback) {
 		$.ajax({
 			method: 'GET',
 			url : base_path + api_path.product_pawn + id,
