@@ -92,6 +92,8 @@ class Product extends DatabaseModel {
 				"HAVING debt > 0" +
 				"ORDER BY debt DESC" ;
 		this.connection.query(q,function(err,rows) {
+			console.log('gere');
+			console.log(rows);
 			if (err || !rows || rows.length == 0) {
 				console.log(err)
 				callback([]);
