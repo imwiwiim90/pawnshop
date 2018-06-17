@@ -234,7 +234,7 @@ $(document).ready(function(){
 				// date after pawn date
 				var inputDate = new Date($('#inpt-execution-date').val());
 				var pawnDate  = new Date(product.pawn.execution_date);
-				if (inputDate < pawnDate) return 'la fecha de la prórroga debe ser después de la fecha de empeño, La fecha de empeño fue ' + pawnDate.toLocaleDateString();
+				if (inputDate < pawnDate) return 'La fecha de la prórroga debe ser después de la fecha de empeño, La fecha de empeño fue ' + pawnDate.toLocaleDateString();
 
 
 			},

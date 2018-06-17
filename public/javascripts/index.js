@@ -57,6 +57,14 @@ $(document).ready(function(){
 			['cc','cc'],
 			['name','nombre'],
 		],
+		'pawn' : [
+			['inventory_id','ID'],
+			['name','nombre'],
+		],
+		'client': [
+			['cc','Cédula'],
+			['name','Nombre'],
+		]
 	}
 
 	$('#search-wrapper').hide();
