@@ -210,6 +210,7 @@ $(document).ready(function(){
 			retrieved : false,
 			title: null,
 			callback : function() {
+				$("#extension-payment-pawn-price").html(product.pawn.price)
 				$("#inpt-extension-payment-price").on('input',inputPriceOnChange);
 			},
 			accept : function() {
