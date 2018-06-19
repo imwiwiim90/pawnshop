@@ -192,7 +192,7 @@ $(document).ready(function(){
 			var $selected = $('#search-wrapper select option:selected');
 			var key = $selected.attr('target-key');
 			var query = $(this).val().toLowerCase();
-			var filtered = table_data.filter((item) => item[key].indexOf(query) != -1 );
+			var filtered = table_data.filter((item) => item[key].toLowerCase().indexOf(query) != -1 );
 
 			if (!filtered) filtered = [];
 			fillTable(filtered);
