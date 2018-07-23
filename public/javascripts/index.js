@@ -79,7 +79,7 @@ $(document).ready(function(){
 	}
 
 	var table_data = [];
-	function getTableData(type) {
+	function getTableData(type,callback) {
 		var _class = 'product';
 		if (type == 'client') _class = 'client';
 		setSearchBox(key_search[type]);
@@ -96,7 +96,7 @@ $(document).ready(function(){
 				})	
 			}
 
-			fillTable(data,key_to_name[type],_class);
+			fillTable(data,key_to_name[type],_class,callback);
 
 		});
 	}
@@ -106,7 +106,7 @@ $(document).ready(function(){
 	*/
 	var curr_headers;
 	var curr_class;
-	function fillTable(data,headers,_class) {
+	function fillTable(data,headers,_class,callback) {
 		// header
 		if (headers) {
 			curr_headers = headers;
@@ -145,27 +145,52 @@ $(document).ready(function(){
 			tbody.append(tr);
 		})
 
+		if (typeof callback === 'function') callback();
+ 	}
+
+	// Show and hide respective items
+	// Calls for data retrieval
+	// Save data in session storage
+	function setTable(type,callback) { 
+
+		getTableData(type,callback);
+
+		if (type == 'pawn' || type == 'expired') $('#sub-menu').show();
+		else $('#sub-menu').hide();
+
+		var mainTableOpts = JSON.parse(sessionStorage.mainTableOpts);
+		mainTableOpts.tbopt = type;
+		sessionStorage.mainTableOpts = JSON.stringify(mainTableOpts);
 	}
 
-	$('#main-table thead').on('click','th',function(){
-		var reverse = 1;
+	function orderTable(key,reverse) {
+		var $th = $('thead th[_class_key='+ key +']');
+		if (reverse == undefined) reverse = 1;
 
-		if ($(this).hasClass('order-th')) {
-			reverse = -1;
-			$('.order-th').removeClass('order-th');
-		} else $(this).addClass('order-th');
+		$('.order-th').removeClass('order-th');
+		if (reverse == 1) $th.addClass('order-th');
 
-
-		var key = $(this).attr('_class_key');
 		table_data.sort(function(a,b) {
 			if (a[key] < b[key]) return -1*reverse;
 			if (a[key] > b[key]) return 1*reverse;
 			return 0;
 		})
 
-		
-
 		fillTable(table_data);
+		var mainTableOpts = JSON.parse(sessionStorage.mainTableOpts);
+		mainTableOpts.order = key;
+		mainTableOpts.reverse = reverse;
+		sessionStorage.mainTableOpts = JSON.stringify(mainTableOpts);
+	}
+
+	$('#main-table thead').on('click','th',function(){
+
+		var reverse = 1;
+		if ($(this).hasClass('order-th')) reverse = -1; 
+
+		var key = $(this).attr('_class_key');
+
+		orderTable(key,reverse);
 	});
 	/*
 		keys
@@ -199,14 +224,10 @@ $(document).ready(function(){
 		});
 	}
 
-	getTableData('pawn');
-
 	$('.tbopt').on('click',function() {
 		var li = $(this);
 		var tbopt = li.attr('tbopt');
-		getTableData(tbopt);
-		if (tbopt == 'pawn' || tbopt == 'expired') $('#sub-menu').show();
-		else $('#sub-menu').hide();
+		setTable(tbopt);
 	});
 
 	$('#btn-new-transaction').on('click',function(){
@@ -226,6 +247,30 @@ $(document).ready(function(){
 			window.location.href = base_path + '/client/id/' + $(this).attr('item-id');
 		}
 	})
-	
+
+
+	// SESSION STORAGE
+	if (!sessionStorage.mainTableOpts) {
+		sessionStorage.mainTableOpts = JSON.stringify({
+			tbopt : '',
+			order : '',
+			reverse: 1,
+		});
+	} 
+	var mainTableOpts = JSON.parse(sessionStorage.mainTableOpts)
+	var tbopt = mainTableOpts['tbopt'];
+	if (tbopt) {
+		$(".tbopt.selected").removeClass('selected');
+		$(".tbopt[tbopt="+ tbopt +"]").addClass('selected');
+		if (tbopt == 'expired') {
+			$('.tbopt[tbopt=pawn]').addClass('selected');
+			$('#sub-menu .tbopt[tbopt=pawn]').removeClass('selected');
+		}
+		setTable(tbopt,function() {
+			if (mainTableOpts.order) orderTable(mainTableOpts.order,mainTableOpts.reverse);
+		});
+	}
+	else setTable('pawn'); 	
+
 
 });
