@@ -85,9 +85,7 @@ $(document).ready(function() {
 		$('#product-client-name').attr('href',app_url + '/client/id/' + client.id);
 	})
 
-	$('#btn-back').on('click',function(){
-		window.location.href = '/';
-	})
+	$('#btn-back').on('click',windowGoBack);
 
 	$('#btn-delete').on('click',function(){
 		$('#delete-container').show();
