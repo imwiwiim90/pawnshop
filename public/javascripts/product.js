@@ -87,6 +87,10 @@ $(document).ready(function() {
 
 	$('#btn-back').on('click',windowGoBack);
 
+	$('#btn-edit').on('click',function(){
+		window.location.href = '/product/edit/' + product_id;
+	});
+
 	$('#btn-delete').on('click',function(){
 		$('#delete-container').show();
 	});

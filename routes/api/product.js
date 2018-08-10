@@ -88,6 +88,17 @@ router.delete('/id/:id',function(req,res,next) {
 	})
 })
 
+router.post('/update',function(req,res,next){
+	var product = new Product();
+	product.set({
+		'name' : req.body.name,
+		'description': req.body.description,
+		'id' : req.body.id,
+	}).update(function(id) {
+		res.redirect('/product/id/' + req.body.id );
+	});
+});
+
 router.delete('/last_transaction/id/:id', function(req,res,next) {
 	var product = new Product();
 	product.set({id:req.params.id}).deleteLastTransaction(function(success) {
