@@ -24,23 +24,41 @@ $(document).ready(function() {
 		$cont = $('#products');
 		$cont.html('');
 
+		var product_keys = ['inventory_id','name','state']
+		var product_state = {
+			'pawn': 'Empeño',
+			'extension_payment': 'Empeño',
+			'close': 'Cerrado',
+			'shelf': 'En venta',
+			'shelf_to_pawn': 'Empeño',
+			'sell': 'Vendido',
+		}
 		data.forEach((product) => {
 			console.log(product)
 			var pcont = $('<div class="product-item">');
 			pcont.attr('product_id',product.id);
-			for (k in product)
-				if (k != 'id') {
+			product_keys.forEach((k) => {
+				if (k == 'state') {
+					var state = product[k];
+					var class_ = 'font-green';
+					if (state == 'sell' || state == 'close') class_ = 'font-red';
+					var ktag = $(`<p class=${class_}>`);
+					ktag.html(product_state[product[k]])
+					pcont.append(ktag);
+				}
+				else if (k != 'id') {
 					var ktag = $('<p>');
 					ktag.html(product[k]);
 					pcont.append(ktag);
 				}
+			});
 			$cont.append(pcont)
 		});
 	}
 
 	products_pawn = [];
 	$.ajax({
-		url : app_url + '/api/client/pawn/id/' + client_id,
+		url : app_url + '/api/client/products/id/' + client_id,
 		method: 'GET',
 	}).done(function(data) {
 		fillTable(data);
