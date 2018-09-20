@@ -28,21 +28,21 @@ $(document).ready(function() {
 		var product_state = {
 			'pawn': 'Empeño',
 			'extension_payment': 'Empeño',
-			'close': 'Cerrado',
+			'close': 'Retirado',
 			'shelf': 'En venta',
 			'shelf_to_pawn': 'Empeño',
 			'sell': 'Vendido',
 		}
 		data.forEach((product) => {
 			console.log(product)
-			var pcont = $('<div class="product-item">');
+			var pcont = $('<div class="product-item row">');
 			pcont.attr('product_id',product.id);
 			product_keys.forEach((k) => {
 				if (k == 'state') {
 					var state = product[k];
 					var class_ = 'font-green';
 					if (state == 'sell' || state == 'close') class_ = 'font-red';
-					var ktag = $(`<p class=${class_}>`);
+					var ktag = $(`<p class="${class_} col-md-3">`);
 					ktag.html(product_state[product[k]])
 					pcont.append(ktag);
 				}
