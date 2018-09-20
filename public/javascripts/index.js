@@ -54,17 +54,25 @@ $(document).ready(function(){
 
 	var key_search = {
 		'client' : [
-			['cc','cc'],
+			['cc','Cédula'],
 			['name','nombre'],
 		],
 		'pawn' : [
 			['inventory_id','ID'],
 			['name','nombre'],
 		],
-		'client': [
-			['cc','Cédula'],
-			['name','Nombre'],
-		]
+		'closed': [
+			['inventory_id','ID'],
+			['name','nombre'],
+		],
+		'shelf': [
+			['inventory_id','ID'],
+			['name','nombre'],
+		],
+		'sold': [
+			['inventory_id','ID'],
+			['name','nombre'],
+		],
 	}
 
 	$('#search-wrapper').hide();
