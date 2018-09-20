@@ -73,6 +73,10 @@ $(document).ready(function(){
 			['inventory_id','ID'],
 			['name','nombre'],
 		],
+		'expired' : [
+			['inventory_id','ID'],
+			['name','nombre'],
+		],
 	}
 
 	$('#search-wrapper').hide();
