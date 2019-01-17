@@ -1,0 +1,25 @@
+extends layout
+
+block styles
+	link(rel='stylesheet', href='/stylesheets/login.css')
+	link(href="https://fonts.googleapis.com/css?family=Raleway:300,400" rel="stylesheet")
+
+block scripts
+	script(src="/javascripts/index.js")
+
+block content
+	div#body-wrapper.d-flex.flex-column.justify-content-center
+		div#card-container.card
+			div.card-header
+				h1 Ingresar
+			div.card-body
+				form
+					div.form-group
+						label Usuario
+						input.form-control
+					div.form-group
+						label contraseña
+						input.form-control(type='password')
+				button.btn.btn-success Aceptar
+
+		

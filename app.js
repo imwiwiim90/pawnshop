@@ -39,6 +39,33 @@ app.use('/api/product/',product);
 app.use('/api/transaction/',transaction);
 app.use('/users', users);
 
+// authentication
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+var User = require('./models/user');
+
+passport.use(new LocalStrategy(
+  { usernameField: 'username' },
+  (username, password, done) => {
+  	let user = new User();
+  	user.set({ username: username, password: password})
+  		.get((users) => {
+  			if (users && users.length > 0) {
+  				let user = users[0]
+  				if (user.username == username && user.password == password)
+  					return done(null,user);
+  			}
+  		});
+  }
+));
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
