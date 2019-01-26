@@ -14,7 +14,8 @@ block content
 			div#menu-block.col-sm-2.white
 				ul
 					li.gp-select.tbopt.selected(tbopt='pawn') Empeños
-					li.gp-select.tbopt(tbopt='shelf') En venta
+					if auth
+						li.gp-select.tbopt(tbopt='shelf') En venta
 					li.gp-select.tbopt(tbopt='sold') Vendidos
 					li.gp-select.tbopt(tbopt='closed') Retiros
 					li.gp-select.tbopt(tbopt='client') Clientes

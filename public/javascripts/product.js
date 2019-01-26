@@ -5,6 +5,8 @@ $(document).ready(function() {
 	var local_path = window.location.pathname;
 	var local_path_id_i = local_path.lastIndexOf('/');
 	var product_id = local_path.substr(local_path_id_i+1,local_path.length);
+	var user_auth = ($('#user-auth').html() == 'true');
+
 
 	$('#delete-container').hide();
 
@@ -68,7 +70,7 @@ $(document).ready(function() {
 			$container.append(transactionHTML(transaction));
 		});
 
-		if (transactions.length > 1 ) {
+		if (transactions.length > 1 && user_auth ) {
 			var historyItem1 = $($('.history-item').get(0));
 			var historyTitle1 = $(historyItem1.find('.history-item-title')[0]);
 			historyTitle1.append('<span class="btn-delete-last-transaction glyphicon glyphicon-remove-circle"></span>')
