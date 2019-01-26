@@ -20,23 +20,27 @@ $(document).ready(function(){
 			['name','Producto'],
 			['price','Precio'],
 			['execution_date','Fecha'],
+			['client','Cliente'],
 		],
 		'closed' : [
 			['inventory_id','ID'],
 			['name','Producto'],
 			['payment','Pago'],
 			['execution_date','Fecha'],
+			['client','Cliente'],
 		],
 		'pawn' : [
 			['inventory_id','ID'],
 			['name','Producto'],
 			['price','Precio'],
 			['execution_date','Fecha'],
+			['client','Cliente'],
 		],
 		'shelf' : [
 			['inventory_id','ID'],
 			['name','Producto'],
 			['execution_date','Fecha'],
+			['client','Cliente'],
 		],
 		'expired' : [
 			['inventory_id','ID'],
@@ -44,6 +48,7 @@ $(document).ready(function(){
 			['payments','Pagos'],
 			['debt','Deuda (meses)'],
 			['begin_date','Fecha de empeño'],
+			['client','Cliente'],
 		],
 		'client' : [
 			['cc','Cédula'],
@@ -55,27 +60,28 @@ $(document).ready(function(){
 	var key_search = {
 		'client' : [
 			['cc','Cédula'],
-			['name','nombre'],
+			['name','Nombre'],
 		],
 		'pawn' : [
 			['inventory_id','ID'],
-			['name','nombre'],
+			['name','Nombre'],
 		],
 		'closed': [
 			['inventory_id','ID'],
-			['name','nombre'],
+			['name','Nombre'],
 		],
 		'shelf': [
 			['inventory_id','ID'],
-			['name','nombre'],
+			['name','Nombre'],
 		],
 		'sold': [
 			['inventory_id','ID'],
-			['name','nombre'],
+			['name','Nombre'],
+			['client','Cliente'],
 		],
 		'expired' : [
 			['inventory_id','ID'],
-			['name','nombre'],
+			['name','Nombre'],
 		],
 	}
 

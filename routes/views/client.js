@@ -4,7 +4,9 @@ var Client = require('../../models/client');
 
 /* GET home page. */
 router.get('/id/:id', function(req, res, next) {
-  res.render('client');
+  res.render('client',{
+  	auth: req.isAuthenticated(),
+  });
 });
 
 router.get('/edit/:id', function(req,res,next) {
@@ -36,6 +38,7 @@ router.get('/edit/:id', function(req,res,next) {
 			},
 			url: '/api/client/update',
 			obj: client,
+  			auth: req.isAuthenticated(),
 		});
 	});
 	

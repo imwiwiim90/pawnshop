@@ -22,21 +22,39 @@ class Product extends DatabaseModel {
 	}
 
 	getInShelf(limits,callback) {
-		var q = "SELECT name, max(execution_date) as execution_date, inventory_id, "+ this.tbname +".id" 
-		+ " FROM " + this.tbname + " LEFT JOIN transaction ON (product.id = product_id)"
-		+ " WHERE product.state = 1"
-		+ " GROUP BY product.id ORDER BY execution_date DESC";
+		var q = "SELECT name, execution_date, inventory_id, shelf.product_id as id, client"
+			+ " FROM ( SELECT name, max(execution_date) as execution_date, inventory_id, "+ this.tbname +".id as product_id" 
+				+ " FROM " + this.tbname + " LEFT JOIN (transaction) ON (product.id = product_id)"
+				+ " WHERE product.state = 1"
+				+ " GROUP BY product.id ORDER BY execution_date DESC"
+			+") as shelf"
+			+ " JOIN ("
+				+ " SELECT client.name as client, product.id as product_id"
+				+ " FROM transaction JOIN (transaction_pawn,product,client)"
+				+ " ON (transaction.id = transaction_pawn.transaction_id AND product.id = transaction.product_id AND client.id = transaction.client_id)"
+			+" ) as clients_name"
+			+" ON (shelf.product_id = clients_name.product_id)";
 		this.connection.query(q,function(err,rows) {
+			console.log(err);
 			if (err || !rows || rows.length == 0) callback(null);
 			else callback(rows);
 		});
 	}
 	getSold(limits,callback) {
-		var q = "SELECT name, execution_date, inventory_id, price, "+ this.tbname +".id"  
-		+ " FROM " + this.tbname + " JOIN (transaction,transaction_sell) ON (product.id = product_id AND transaction.id = transaction_sell.transaction_id)"
-		+ " WHERE product.state = 2"
-		+ " ORDER BY execution_date DESC";
+		var q = "SELECT name, execution_date, inventory_id, price, sold.product_id as id, client "  
+			+ "FROM (SELECT name, execution_date, inventory_id, price, "+ this.tbname +".id as product_id"  
+				+ " FROM " + this.tbname + " JOIN (transaction,transaction_sell) ON (product.id = product_id AND transaction.id = transaction_sell.transaction_id)"
+				+ " WHERE product.state = 2"
+				+ " ORDER BY execution_date DESC"
+			+ ") as sold"
+			+ " JOIN ("
+				+ " SELECT client.name as client, product.id as product_id"
+				+ " FROM transaction JOIN (transaction_pawn,product,client)"
+				+ " ON (transaction.id = transaction_pawn.transaction_id AND product.id = transaction.product_id AND client.id = transaction.client_id)"
+			+" ) as clients_name"
+			+" ON (sold.product_id = clients_name.product_id)";
 		this.connection.query(q,function(err,rows) {
+			console.log(err)
 			if (err || !rows || rows.length == 0) callback([]);
 			else callback(rows);
 		});
@@ -49,19 +67,28 @@ class Product extends DatabaseModel {
 	ORDER BY execution_date DESC
 	*/
 	getClosed(limits,callback) {
-		var q = " SELECT name, execution_date, payment, inventory_id, " + this.tbname + ".id"
-		+ " FROM " + this.tbname + " JOIN (transaction,transaction_close) ON (product.id = product_id AND transaction.id = transaction_close.transaction_id)"
-		+ " WHERE product.state = 3"
-		+ " ORDER BY execution_date DESC";
+		var q = "SELECT name, execution_date, payment, inventory_id, closed.product_id as id, client "
+			+ " FROM (SELECT name, execution_date, payment, inventory_id, " + this.tbname + ".id as product_id"
+				+ " FROM " + this.tbname + " JOIN (transaction,transaction_close) ON (product.id = product_id AND transaction.id = transaction_close.transaction_id)"
+				+ " WHERE product.state = 3"
+				+ " ORDER BY execution_date DESC"
+			+ ") as closed"
+			+ " JOIN ("
+				+ " SELECT client.name as client, product.id as product_id"
+				+ " FROM transaction JOIN (transaction_pawn,product,client)"
+				+ " ON (transaction.id = transaction_pawn.transaction_id AND product.id = transaction.product_id AND client.id = transaction.client_id)"
+			+" ) as clients_name"
+			+" ON (closed.product_id = clients_name.product_id)";
 		this.connection.query(q,function(err,rows) {
+			console.log(err);
 			if (err || !rows || rows.length == 0) callback([]);
 			else callback(rows);
 		});
 	}
 
 	getPawn(limits,callback) {
-		var q = "SELECT name, execution_date, price, inventory_id, " + this.tbname + ".id as id " 
-		+ " FROM " + this.tbname + " JOIN (transaction,transaction_pawn) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id)"
+		var q = "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, " + this.tbname + ".id as id " 
+		+ " FROM " + this.tbname + " JOIN (transaction,transaction_pawn,client) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id AND client.id = transaction.client_id)"
 		+ " WHERE product.state = 0"
 		+ " ORDER BY execution_date DESC";
 		this.connection.query(q,function(err,rows) {
@@ -72,7 +99,9 @@ class Product extends DatabaseModel {
 	}
 
 	getExpired(limits,callback) {
-		var q = "SELECT * , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt FROM ( " +
+		var q = 
+			"SELECT expired.product_id as id, payments, inventory_id, name, begin_date, debt, client FROM (" +
+				"SELECT number_of_payments.id as product_id, payments, inventory_id, name, begin_date , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt FROM ( " +
 					"SELECT id ,IFNULL(payments,0) as payments FROM (" +
 						"SELECT product.id as id, SUM(number_of_payments) as payments " +
 						"FROM product LEFT JOIN (transaction,transaction_extension_payment) " +
@@ -90,7 +119,15 @@ class Product extends DatabaseModel {
 				") as product_begin_date " +
 				"ON (number_of_payments.id = product_begin_date.id) " +
 				"HAVING debt > 0 " +
-				"ORDER BY debt DESC " ;
+				"ORDER BY debt DESC " +
+			") as expired" +
+			" JOIN (" +
+				" SELECT client.name as client, product.id as product_id" +
+				" FROM transaction JOIN (transaction_pawn,product,client)" +
+				" ON (transaction.id = transaction_pawn.transaction_id AND product.id = transaction.product_id AND client.id = transaction.client_id)" +
+			" ) as clients_name" +
+			" ON (expired.product_id = clients_name.product_id)";
+
 		this.connection.query(q,function(err,rows) {
 			if (err || !rows || rows.length == 0) {
 				console.log(err)

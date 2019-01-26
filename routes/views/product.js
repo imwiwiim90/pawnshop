@@ -4,7 +4,9 @@ var Product = require('../../models/product')
 
 /* GET home page. */
 router.get('/id/:id', function(req, res, next) {
-  res.render('product');
+  res.render('product',{
+  	auth: req.isAuthenticated(),
+  });
 });
 
 router.get('/edit/:id', function(req,res,next) {
@@ -29,7 +31,8 @@ router.get('/edit/:id', function(req,res,next) {
 				attrs: product_attrs
 			},
 			url: '/api/product/update',
-			obj: product
+			obj: product,
+  			auth: req.isAuthenticated(),
 		})
 	})
 });

@@ -36,6 +36,19 @@ a {
  box-shadow: 0 0px 20px 0px #666666;
 }
 
+.header button {
+	background-color: #6792FC;
+	color: white;
+	padding: 12px 15px;
+	float: right;
+	margin-right: 80px;
+	margin-top: 25px;
+}
+
+.header img {
+	margin: 12px 40px;
+}
+
 
 .gp-select {
 	cursor: pointer;

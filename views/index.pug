@@ -10,26 +10,28 @@ block scripts
 
 block content
 	div.container-fluid#body-wrapper
-		div#menu-block.col-sm-2.white
-			ul
-				li.gp-select.tbopt.selected(tbopt='pawn') Empeños
-				li.gp-select.tbopt(tbopt='shelf') En venta
-				li.gp-select.tbopt(tbopt='sold') Vendidos
-				li.gp-select.tbopt(tbopt='closed') Retiros
-				li.gp-select.tbopt(tbopt='client') Clientes
-				li#btn-new-transaction Nueva Transacción
-		div.col-sm-8.col-sm-offset-1#main-wrapper
-			div#sub-menu
-				div.gp-select.selected.tbopt(tbopt='pawn') Todos
-				div.gp-select.tbopt(tbopt='expired') Vencidos
-			div.clearfix
-			div#search-wrapper
-				select
-					option cc
-					option name
-				input#search-box
-			div#main-container.white
-				table#main-table.table
-					thead
-						tr
-					tbody
+		div.row
+			div#menu-block.col-sm-2.white
+				ul
+					li.gp-select.tbopt.selected(tbopt='pawn') Empeños
+					li.gp-select.tbopt(tbopt='shelf') En venta
+					li.gp-select.tbopt(tbopt='sold') Vendidos
+					li.gp-select.tbopt(tbopt='closed') Retiros
+					li.gp-select.tbopt(tbopt='client') Clientes
+					if auth
+						li#btn-new-transaction Nueva Transacción
+			div.col-sm-9#main-wrapper
+				div#sub-menu
+					div.gp-select.selected.tbopt(tbopt='pawn') Todos
+					div.gp-select.tbopt(tbopt='expired') Vencidos
+				div.clearfix
+				div#search-wrapper
+					select
+						option cc
+						option name
+					input#search-box
+				div#main-container.white
+					table#main-table.table
+						thead
+							tr
+						tbody

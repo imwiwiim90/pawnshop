@@ -15,8 +15,9 @@ block content
 				button#btn-back 
 					span.glyphicon.glyphicon-chevron-left
 					| atras
-				button#btn-delete borrar
-				span#btn-edit(class='glyphicon glyphicon-pencil')
+				if auth
+					button#btn-delete borrar
+					span#btn-edit(class='glyphicon glyphicon-pencil')
 				
 			h2#product-inventory-id-wrapper ID #<span id='product-inventory-id'></span>
 			a#product-client-name 

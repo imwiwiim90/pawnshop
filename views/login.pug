@@ -13,13 +13,13 @@ block content
 			div.card-header
 				h1 Ingresar
 			div.card-body
-				form
+				form( action='/login' method='post')
 					div.form-group
 						label Usuario
-						input.form-control
+						input.form-control(name='username')
 					div.form-group
 						label contraseña
-						input.form-control(type='password')
-				button.btn.btn-success Aceptar
+						input.form-control(type='password' name='password')
+					input.btn.btn-success(type='submit' value='Aceptar')
 
 		
