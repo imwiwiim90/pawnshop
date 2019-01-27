@@ -18,7 +18,7 @@ $(document).ready(function(){
 	/* error view */
 	var error_msg = {
 		'id-not-found' : 'El id ingresado no esta asociado a ningún producto, intente con otro número',
-		'pawn-invalid-id' : 'El id ingresado ya pertenece a algun producto',
+		'product-id-exist' : 'El id ingresado ya pertenece a algun producto',
 		'not-pawn' : 'El producto no se encuentra en empeño',
 		'not-shelf' : 'El producto no se encuentra en vitrina',
 		'unknown' : 'Se ha producido un error desconocido en el sistema',
@@ -100,13 +100,24 @@ $(document).ready(function(){
 					product = _product;
 					if (current_transaction == 'pawn') {
 						if (product) {
-							setMsgError('pawn-invalid-id');
+							setMsgError('product-id-exist');
 							setDynamicContainer('error');
 						} else {
 							product = {
 								inventory_id : $('#product-id').val(),
 							};
 							setDynamicContainer('search_client');
+						}
+					}
+					else if (current_transaction == 'purchase') {
+						if (product) {
+							setMsgError('product-id-exist');
+							setDynamicContainer('error');
+						} else {
+							product = {
+								inventory_id : $('#product-id').val(),
+							};
+							setDynamicContainer('optional_client');
 						}
 					}
 					else if (!product) {
@@ -256,7 +267,7 @@ $(document).ready(function(){
 							$("#msg-cc-not-found").show();
 						} else {
 							client = data;
-							setDynamicContainer('pawn');
+							setDynamicContainer('new_product');
 						}
 					});
 				});
@@ -296,7 +307,7 @@ $(document).ready(function(){
 							}
 							_client.id = id;
 							client = _client;
-							setDynamicContainer('pawn');
+							setDynamicContainer('new_product');
 						});
 					} else {
 						$('#msg-cc-found').show();
@@ -309,13 +320,16 @@ $(document).ready(function(){
 				if ($('#inpt-client-cc').val() == '') return 'Es obligatorio la cédula del cliente';
 			}
 		},
-		'pawn' : {
+		'new_product' : {
 			retrieved: false,
-			title: null,
+			title: "Producto",
 			callback : function() {
 				$("#inpt-product-price").on('input',inputPriceOnChange);
-				$('#client-name').html(client.name);
-				$('#client-cc').html(client.cc);
+				if (client.name) $('#client-name').html(client.name);
+				else $('#client-name').hide();
+				if (client.cc) $('#client-cc').html(client.cc);
+				else $('#client-cc').hide();
+				if (!client.cc && !client.name) $('#client-description').hide();
 			},
 			accept : function () {
 				transaction.execution_date = $('#inpt-execution-date').val();
@@ -324,7 +338,8 @@ $(document).ready(function(){
 				product.name = $('#inpt-product-name').val();
 				product.description = $('#inpt-product-description').val();
 				transaction.product = product
-				uploadTransaction('pawn',(id) => {
+
+				uploadTransaction(current_transaction,(id) => {
 					if (isNaN(parseInt(id))) {
 						setMsgError('unknown');
 						setDynamicContainer('error');
@@ -337,6 +352,19 @@ $(document).ready(function(){
 				if ($('#inpt-product-price').val() == '') return 'Es obligatorio el precio del empeño';
 				if ($('#inpt-execution-date').val() == '') return 'Es obligatorio la fecha del empeño';
 				if ($('#inpt-product-name').val() == '') return 'Ingrese el nombre del producto';
+			}
+		},
+		'optional_client' : {
+			retrieved: false,
+			title: 'Elegir Cliente?',
+			callback: function() {
+				$('#btns-container').hide();
+				$('#btn-optional-client-yes').on('click',function() {
+					setDynamicContainer('search_client');
+				});
+				$('#btn-optional-client-no').on('click',function() {
+					setDynamicContainer('new_product');
+				});
 			}
 		}
 		

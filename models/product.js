@@ -26,12 +26,14 @@ class Product extends DatabaseModel {
 			+ " FROM ( SELECT name, max(execution_date) as execution_date, inventory_id, "+ this.tbname +".id as product_id" 
 				+ " FROM " + this.tbname + " LEFT JOIN (transaction) ON (product.id = product_id)"
 				+ " WHERE product.state = 1"
-				+ " GROUP BY product.id ORDER BY execution_date DESC"
+				+ " GROUP BY product.id"
+				+ " ORDER BY execution_date DESC"
 			+") as shelf"
-			+ " JOIN ("
+			+ " LEFT JOIN ("
 				+ " SELECT client.name as client, product.id as product_id"
-				+ " FROM transaction JOIN (transaction_pawn,product,client)"
-				+ " ON (transaction.id = transaction_pawn.transaction_id AND product.id = transaction.product_id AND client.id = transaction.client_id)"
+				+ " FROM transaction JOIN (product,client)"
+				+ " ON (transaction.client_id = client.id AND product.id = transaction.product_id)"
+				+ " WHERE product.state = 1"
 			+" ) as clients_name"
 			+" ON (shelf.product_id = clients_name.product_id)";
 		this.connection.query(q,function(err,rows) {
@@ -148,6 +150,7 @@ class Product extends DatabaseModel {
 			require('./transaction').Shelf,
 			require('./transaction').ShelfToPawn,
 			require('./transaction').Close,
+			require('./transaction').Purchase,
 		];
 		var transactionNames = [
 			'extension_payment',
@@ -156,6 +159,7 @@ class Product extends DatabaseModel {
 			'shelf',
 			'shelf_to_pawn',
 			'close',
+			'purchase',
 		]
 		// recursive call through all classes
 		function getItems(i) {

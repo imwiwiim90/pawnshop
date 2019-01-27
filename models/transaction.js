@@ -239,9 +239,44 @@ class Close extends Transaction {
 	}
 }
 
+class Purchase extends Transaction {
+	constructor() {
+		var attr = [
+			"price",
+		];
+		super('purchase',attr);
+		this.attr = attr;
+		this.after_product_state = 1;
+	}
+
+	save(callback) {
+		super.save(
+			(id) => callback(id),
+			(connection,_callback) => {
+				this.product.save((id) => {
+					if (!isNaN(id)) this.attrs.product_id = id;
+					_callback();
+				},connection);
+			}
+		);
+	}
+
+	set(attrs) {
+
+		super.set(attrs);
+		if (attrs.product) {
+			this.product = new this.Product();
+			this.product.set(attrs.product);
+		}
+		return this;
+	}
+
+}
+
 exports.Sell = Sell;
 exports.Shelf = Shelf;
 exports.ExtensionPayment = ExtensionPayment;
 exports.Pawn = Pawn;
 exports.ShelfToPawn = ShelfToPawn;
 exports.Close = Close;
+exports.Purchase = Purchase;

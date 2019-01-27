@@ -7,6 +7,7 @@ var Sell = require('../../models/transaction').Sell;
 var Close = require('../../models/transaction').Close;
 var Shelf = require('../../models/transaction').Shelf;
 var ShelfToPawn = require('../../models/transaction').ShelfToPawn;
+var Purchase = require('../../models/transaction').Purchase;
 
 /* GET users listing. */
 router.get('/pawn/id/:id', function(req, res, next) {
@@ -62,6 +63,13 @@ router.post('/shelf/new',function(req, res, next){
 router.post('/shelf_to_pawn/new',function(req, res, next){
 	var shelfToPawn = new ShelfToPawn();
 	shelfToPawn.set(req.body).save(function(id){
+		res.send(String(id));
+	});
+});
+
+router.post('/purchase/new',function(req, res, next) {
+	var purchase = new Purchase();
+	purchase.set(req.body).save(function(id){
 		res.send(String(id));
 	});
 });

@@ -153,6 +153,7 @@ $(document).ready(function(){
 			headers.forEach(function(tuple) {
 				var k = tuple[0];
 				var dat = i[k];
+				if (dat === null) dat = '';
 				if (k == 'name' && _class == 'client') {
 					dat = capFirstLetterWord(dat);
 				}

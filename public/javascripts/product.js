@@ -18,10 +18,11 @@ $(document).ready(function() {
 			'shelf': 'saca',
 			'shelf_to_pawn': 'devuelta a empeño',
 			'close': 'cierre',
+			'purchase' : 'compra',
 		};
 
 		var transaction_body_tag = '';
-		if (transaction.type == 'pawn' || transaction.type == 'sell')
+		if (transaction.type == 'pawn' || transaction.type == 'sell' || transaction.type == 'purchase')
 			transaction_body_tag = "<span>$" + transaction.price + "</span>";
 		if (transaction.type == 'close')
 			transaction_body_tag = "<span>$" + transaction.payment + "</span>";
@@ -83,8 +84,10 @@ $(document).ready(function() {
 		method: 'GET',
 		url: app_url + '/api/product/client/' + product_id,
 	}).done((client) => {
-		$('#product-client-name').html(client.name);
-		$('#product-client-name').attr('href',app_url + '/client/id/' + client.id);
+		if (client) {
+			$('#product-client-name').html(client.name);
+			$('#product-client-name').attr('href',app_url + '/client/id/' + client.id);
+		}
 	})
 
 	$('#btn-back').on('click',windowGoBack);
