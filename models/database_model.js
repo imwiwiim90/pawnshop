@@ -132,7 +132,10 @@ class DatabaseModel {
 			console.log(q);
 
 			connection.query(q,attrs_vals,function(err,rows){
-				if (err || !rows ) callback(null);
+				if (err || !rows ) {
+					console.log(err);
+					callback(null);
+				}
 				else callback(rows);
 			});
 			return;
