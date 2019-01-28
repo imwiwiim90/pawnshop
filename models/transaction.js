@@ -146,7 +146,10 @@ class Transaction extends DatabaseModel {
 		console.log(q);
 
 		this.connection.query(q,attrs_vals,function(err,rows) {
-			if (err || !rows) callback(null);
+			if (err || !rows) {
+				console.log(err);
+				callback(null);
+			}
 			else callback(rows);
 		})
 	}
