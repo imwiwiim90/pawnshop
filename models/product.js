@@ -89,10 +89,18 @@ class Product extends DatabaseModel {
 	}
 
 	getPawn(limits,callback) {
-		var q = "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, " + this.tbname + ".id as id " 
-		+ " FROM " + this.tbname + " JOIN (transaction,transaction_pawn,client) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id AND client.id = transaction.client_id)"
-		+ " WHERE product.state = 0"
-		+ " ORDER BY execution_date DESC";
+		var q = "SELECT * FROM ( "
+			+ "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, product.id as id  "
+			+ "FROM product JOIN (transaction,transaction_pawn,client) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id AND client.id = transaction.client_id) "
+			+ "WHERE product.state = 0 "
+			+ "ORDER BY execution_date DESC "
+		+ ") as pawn "
+		+ "JOIN ( "
+			+ "SELECT product_id as id, max(execution_date) as last_extension_payment_date FROM product JOIN (transaction, transaction_extension_payment) "
+			+ "ON (transaction.id = transaction_extension_payment.transaction_id and transaction.product_id = product.id) "
+			+ "group by product_id "
+		+ ") as extension "
+		+ "ON (pawn.id = extension.id)" ;
 		this.connection.query(q,function(err,rows) {
 			console.log(err);
 			if (err || !rows || rows.length == 0) callback([]);

@@ -35,6 +35,7 @@ $(document).ready(function(){
 			['price','Precio'],
 			['execution_date','Fecha'],
 			['client','Cliente'],
+			['last_extension_payment_date','Última prórroga'],
 		],
 		'shelf' : [
 			['inventory_id','ID'],
