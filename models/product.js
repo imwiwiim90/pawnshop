@@ -95,7 +95,7 @@ class Product extends DatabaseModel {
 			+ "WHERE product.state = 0 "
 			+ "ORDER BY execution_date DESC "
 		+ ") as pawn "
-		+ "JOIN ( "
+		+ "LEFT JOIN ( "
 			+ "SELECT product_id as id, max(execution_date) as last_extension_payment_date FROM product JOIN (transaction, transaction_extension_payment) "
 			+ "ON (transaction.id = transaction_extension_payment.transaction_id and transaction.product_id = product.id) "
 			+ "group by product_id "
