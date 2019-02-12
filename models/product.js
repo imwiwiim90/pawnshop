@@ -89,7 +89,7 @@ class Product extends DatabaseModel {
 	}
 
 	getPawn(limits,callback) {
-		var q = "SELECT * FROM ( "
+		var q = "SELECT pawn.* FROM ( "
 			+ "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, product.id as id  "
 			+ "FROM product JOIN (transaction,transaction_pawn,client) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id AND client.id = transaction.client_id) "
 			+ "WHERE product.state = 0 "
