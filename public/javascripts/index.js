@@ -35,7 +35,6 @@ $(document).ready(function(){
 			['price','Precio'],
 			['execution_date','Fecha'],
 			['client','Cliente'],
-			['last_extension_payment_date','Última prórroga'],
 		],
 		'shelf' : [
 			['inventory_id','ID'],
@@ -50,6 +49,7 @@ $(document).ready(function(){
 			['debt','Deuda (meses)'],
 			['begin_date','Fecha de empeño'],
 			['client','Cliente'],
+			['last_extension_payment_date','Última prórroga'],
 		],
 		'client' : [
 			['cc','Cédula'],

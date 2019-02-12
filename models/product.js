@@ -89,18 +89,10 @@ class Product extends DatabaseModel {
 	}
 
 	getPawn(limits,callback) {
-		var q = "SELECT pawn.* FROM ( "
-			+ "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, product.id as id  "
+		var q = "SELECT product.name as name, client.name as client, execution_date, price, inventory_id, product.id as id  "
 			+ "FROM product JOIN (transaction,transaction_pawn,client) ON (product.id = product_id AND transaction.id = transaction_pawn.transaction_id AND client.id = transaction.client_id) "
 			+ "WHERE product.state = 0 "
-			+ "ORDER BY execution_date DESC "
-		+ ") as pawn "
-		+ "LEFT JOIN ( "
-			+ "SELECT product_id as id, max(execution_date) as last_extension_payment_date FROM product JOIN (transaction, transaction_extension_payment) "
-			+ "ON (transaction.id = transaction_extension_payment.transaction_id and transaction.product_id = product.id) "
-			+ "group by product_id "
-		+ ") as extension "
-		+ "ON (pawn.id = extension.id)" ;
+			+ "ORDER BY execution_date DESC ";
 		this.connection.query(q,function(err,rows) {
 			console.log(err);
 			if (err || !rows || rows.length == 0) callback([]);
@@ -110,10 +102,10 @@ class Product extends DatabaseModel {
 
 	getExpired(limits,callback) {
 		var q = 
-			"SELECT expired.product_id as id, payments, inventory_id, name, begin_date, debt, client FROM (" +
-				"SELECT number_of_payments.id as product_id, payments, inventory_id, name, begin_date , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt FROM ( " +
-					"SELECT id ,IFNULL(payments,0) as payments FROM (" +
-						"SELECT product.id as id, SUM(number_of_payments) as payments " +
+			"SELECT expired.product_id as id, payments, inventory_id, name, begin_date, debt, client, last_extension_payment_date FROM (" +
+				"SELECT number_of_payments.id as product_id, payments, inventory_id, name, begin_date , (TIMESTAMPDIFF(MONTH,begin_date,NOW()) - payments) as debt, last_extension_payment_date FROM ( " +
+					"SELECT id ,IFNULL(payments,0) as payments, last_extension_payment_date FROM (" +
+						"SELECT product.id as id, SUM(number_of_payments) as payments, max(transaction.execution_date) as last_extension_payment_date " +
 						"FROM product LEFT JOIN (transaction,transaction_extension_payment) " +
 						"ON (product.id = transaction.product_id AND transaction.id = transaction_extension_payment.transaction_id ) " +
 						"WHERE product.state = 0 " +
