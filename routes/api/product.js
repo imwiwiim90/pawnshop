@@ -45,6 +45,7 @@ router.get('/closed', function(req,res,next) {
 })
 
 router.get('/pawn',function(req,res,next) {
+	console.log('requesting pawn');
 	var product = new Product();
 	product.getPawn(null,function(products) {
 		console.log(products);
