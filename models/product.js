@@ -164,8 +164,8 @@ class Product extends DatabaseModel {
 		// recursive call through all classes
 		function getItems(i) {
 			if (i == transactionClasses.length) {
-				transactions.sort((a,b) => a.created_at < b.created_at);
-				transactions.sort((a,b) => a.execution_date < b.execution_date);
+				transactions.sort((a,b) => a.created_at < b.created_at? -1:1);
+				transactions.sort((a,b) => a.execution_date < b.execution_date? -1:1);
 				callback(transactions);
 				return;
 			}
